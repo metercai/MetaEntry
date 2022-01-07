@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2020 OpenWrt.org
+# Copyright (C) 2010 OpenWrt.org
 #
 # This is free software, licensed under the GNU General Public License v2.
 # See /LICENSE for more information.
@@ -42,27 +42,27 @@ CONFIGURE_ARGS += --with-pic
 MAKE_PATH:=ndpi-netfilter
 
 MAKE_FLAGS += \
-    KERNEL_DIR="$(LINUX_DIR)" \
-    MODULES_DIR="$(TARGET_MODULES_DIR)" \
-    ARCH="$(LINUX_KARCH)" \
-    CROSS_COMPILE="$(TARGET_CROSS)" \
-    NDPI_PATH=$(PKG_BUILD_DIR)/ndpi-netfilter
+	KERNEL_DIR="$(LINUX_DIR)" \
+	MODULES_DIR="$(TARGET_MODULES_DIR)" \
+	ARCH="$(LINUX_KARCH)" \
+	CROSS_COMPILE="$(TARGET_CROSS)" \
+	NDPI_PATH=$(PKG_BUILD_DIR)/ndpi-netfilter
 
 define Build/Configure
-    ( cd $(PKG_BUILD_DIR); ./autogen.sh )
-    $(call Build/Configure/Default)
+	( cd $(PKG_BUILD_DIR); ./autogen.sh )
+	$(call Build/Configure/Default)
 endef
 
 define Build/Compile
-    (cd $(PKG_BUILD_DIR)/src/lib &&\
-        gcc -g -O2 -fPIC -DPIC -DNDPI_LIB_COMPILATION -I../../src/include/ -I../../src/lib/third_party/include/ ndpi_network_list_compile.c -o ndpi_network_list_compile &&\
-        ./ndpi_network_list_compile -o ndpi_network_list.c.inc ndpi_network_list_std.yaml ndpi_network_list_tor.yaml)
-    make $(MAKE_FLAGS) -C $(PKG_BUILD_DIR)/ndpi-netfilter
+	(cd $(PKG_BUILD_DIR)/src/lib &&\
+		gcc -g -O2 -fPIC -DPIC -DNDPI_LIB_COMPILATION -I../../src/include/ -I../../src/lib/third_party/include/ ndpi_network_list_compile.c -o ndpi_network_list_compile &&\
+		./ndpi_network_list_compile -o ndpi_network_list.c.inc ndpi_network_list_std.yaml ndpi_network_list_tor.yaml)
+	make $(MAKE_FLAGS) -C $(PKG_BUILD_DIR)/ndpi-netfilter
 endef
 
 define Package/iptables-mod-ndpi/install
-    $(INSTALL_DIR) $(1)/usr/lib/iptables
-    $(INSTALL_BIN) $(PKG_BUILD_DIR)/ndpi-netfilter/ipt/libxt_ndpi.so $(1)/usr/lib/iptables
+	$(INSTALL_DIR) $(1)/usr/lib/iptables
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/ndpi-netfilter/ipt/libxt_ndpi.so $(1)/usr/lib/iptables
 endef
 
 define KernelPackage/ipt-ndpi
@@ -71,7 +71,7 @@ define KernelPackage/ipt-ndpi
   DEPENDS:=+kmod-nf-conntrack +kmod-nf-conntrack-netlink +kmod-ipt-compat-xtables +kmod-ipt-conntrack-label
   KCONFIG:=CONFIG_NF_CONNTRACK_LABELS=y
   FILES:= \
-    $(PKG_BUILD_DIR)/ndpi-netfilter/src/xt_ndpi.ko
+	$(PKG_BUILD_DIR)/ndpi-netfilter/src/xt_ndpi.ko
   AUTOLOAD:=$(call AutoProbe,xt_ndpi)
 endef
 
