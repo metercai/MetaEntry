@@ -82,7 +82,7 @@ define Package/$(PKG_NAME)/install
 	$(INSTALL_CONF) ./files/sss.acl $(1)/etc/sss/sss.acl
 	$(SED) "s#%SSSPWD%#$(SSSPWD)#g" $(1)/etc/sss/local.json
 	$(INSTALL_DIR) $(1)/etc/init.d
-	$(INSTALL_BIN) ./etc/init.d/ssservice $(1)/etc/init.d/ssservice
+	$(INSTALL_BIN) ./files/init.d/ssservice $(1)/etc/init.d/ssservice
 ifeq ($(CONFIG_SS_RUST_TOOLS),y)
 	$(INSTALL_BIN) ./files/sss/ssurl $(1)/usr/bin/
 endif
