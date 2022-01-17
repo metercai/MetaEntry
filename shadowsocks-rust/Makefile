@@ -4,6 +4,10 @@
 # This is free software, licensed under the GNU General Public License v3.
 # See /LICENSE for more information.
 #
+#	$(INSTALL_DIR) $(1)/etc/uci-defaults
+# 	$(INSTALL_BIN) ./files/uci-defaults $(1)/etc/uci-defaults/$(PKG_NAME)
+
+
 
 include $(TOPDIR)/rules.mk
 
@@ -74,8 +78,6 @@ endef
 define Package/$(PKG_NAME)/install
 	$(INSTALL_DIR) $(1)/usr/bin
 	$(INSTALL_BIN) ./files/sss/ssservice $(1)/usr/bin/
-	$(INSTALL_DIR) $(1)/etc/uci-defaults
-	$(INSTALL_BIN) ./files/uci-defaults $(1)/etc/uci-defaults/$(PKG_NAME)
 	$(INSTALL_DIR) $(1)/etc/sss
 	$(INSTALL_CONF) ./files/local.json $(1)/etc/sss/local.json
 	$(INSTALL_CONF) ./files/log4rs.yaml $(1)/etc/sss/log4rs.yaml
