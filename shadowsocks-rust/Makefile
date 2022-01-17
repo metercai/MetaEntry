@@ -65,13 +65,26 @@ fi
 exit 0
 endef
 
+define Package/$(PKG_NAME)/conffiles
+/etc/sss/local.json
+/etc/sss/log4rs.yaml
+/etc/sss/sss.acl
+endef
+
 define Package/$(PKG_NAME)/install
 	$(INSTALL_DIR) $(1)/usr/bin
-	$(INSTALL_BIN) $(PKG_BUILD_DIR)/ssservice $(1)/usr/bin/
+	$(INSTALL_BIN) ./files/sss/ssservice $(1)/usr/bin/
 	$(INSTALL_DIR) $(1)/etc/uci-defaults
 	$(INSTALL_BIN) ./files/uci-defaults $(1)/etc/uci-defaults/$(PKG_NAME)
+	$(INSTALL_DIR) $(1)/etc/sss
+	$(INSTALL_CONF) ./files/local.conf $(1)/etc/sss/local.json
+	$(INSTALL_CONF) ./files/log4rs.yaml $(1)/etc/sss/log4rs.yaml
+	$(INSTALL_CONF) ./files/sss.acl $(1)/etc/sss/sss.acl
+	$(SED) "s#%SSSPWD%#$(SSSPWD)#g" $(1)/etc/sss/local.json
+	$(INSTALL_DIR) $(1)/etc/init.d
+	$(INSTALL_BIN) ./etc/init.d/ssservice $(1)/etc/init.d/ssservice
 ifeq ($(CONFIG_SS_RUST_TOOLS),y)
-	$(INSTALL_BIN) $(PKG_BUILD_DIR)/ssurl $(1)/usr/bin/
+	$(INSTALL_BIN) ./files/sss/ssurl $(1)/usr/bin/
 endif
 endef
 
