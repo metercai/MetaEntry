@@ -2,7 +2,7 @@ name: SSR Build Releases
 on:
   push:
     paths:
-      - '*.version'
+      - '**/*-ssr.version'
 
 env:
   CARGO_TERM_COLOR: always
@@ -18,6 +18,9 @@ jobs:
           - aarch64-unknown-linux-musl
 
     steps:
+      - name: Checkout
+        uses: actions/checkout@main
+
       - uses: GuillaumeFalourd/clone-github-repo-action@v1
         with:
             owner: 'shadowsocks'
@@ -63,11 +66,14 @@ jobs:
           - x86_64-apple-darwin
           - aarch64-apple-darwin
     steps:
-      - uses: actions/checkout@v2
-
+      - uses: GuillaumeFalourd/clone-github-repo-action@v1
+          with:
+            owner: 'shadowsocks'
+            repository: 'shadowsocks-rust'
       - name: Install GNU tar
         if: runner.os == 'macOS'
         run: |
+          cd shadowsocks-rust
           brew install gnu-tar
           # echo "::add-path::/usr/local/opt/gnu-tar/libexec/gnubin"
           echo "/usr/local/opt/gnu-tar/libexec/gnubin" >> $GITHUB_PATH
@@ -103,8 +109,10 @@ jobs:
       RUSTFLAGS: "-Ctarget-feature=+crt-static"
       RUST_BACKTRACE: full
     steps:
-      - uses: actions/checkout@v2
-
+      - uses: GuillaumeFalourd/clone-github-repo-action@v1
+          with:
+            owner: 'shadowsocks'
+            repository: 'shadowsocks-rust'
       - name: Install Rust Nightly
         uses: actions-rs/toolchain@v1
         with:
@@ -115,6 +123,7 @@ jobs:
 
       - name: Build release
         run: |
+          cd shadowsocks-rust
           pwsh ./build/build-host-release.ps1
       - name: Upload Github Assets
         uses: softprops/action-gh-release@v1
