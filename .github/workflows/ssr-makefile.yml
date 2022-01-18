@@ -18,12 +18,10 @@ jobs:
           - aarch64-unknown-linux-musl
 
     steps:
-      - uses: sudosubin/git-clone-action@v1
+      - uses: GuillaumeFalourd/clone-github-repo-action@v1
         with:
-            repository: 'shadowsocks/shadowsocks-rust'
-            platform: 'github'
-            ref: 'master'
-            path: 'ssr'
+            owner: 'shadowsocks'
+            repository: 'shadowsocks-rust'
 
       - name: Install cross
         run: cargo install cross
@@ -31,7 +29,7 @@ jobs:
       - name: Build ${{ matrix.target }}
         timeout-minutes: 120
         run: |
-          cd ssr
+          cd <repository-name>
           compile_target=${{ matrix.target }}
           if [[ "$compile_target" == *"-linux-"* || "$compile_target" == *"-apple-"* ]]; then
             compile_features="-f local-redir -f local-tun -f local-dns"
