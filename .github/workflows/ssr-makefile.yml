@@ -29,7 +29,6 @@ jobs:
       - name: Build ${{ matrix.target }}
         timeout-minutes: 120
         run: |
-          cd shadowsocks-rust
           compile_target=${{ matrix.target }}
           if [[ "$compile_target" == *"-linux-"* || "$compile_target" == *"-apple-"* ]]; then
             compile_features="-f local-redir -f local-tun -f local-dns"
@@ -70,7 +69,6 @@ jobs:
       - name: Install GNU tar
         if: runner.os == 'macOS'
         run: |
-          cd shadowsocks-rust
           brew install gnu-tar
           # echo "::add-path::/usr/local/opt/gnu-tar/libexec/gnubin"
           echo "/usr/local/opt/gnu-tar/libexec/gnubin" >> $GITHUB_PATH
@@ -120,7 +118,6 @@ jobs:
 
       - name: Build release
         run: |
-          cd shadowsocks-rust
           pwsh ./build/build-host-release.ps1
       - name: Upload Github Assets
         uses: softprops/action-gh-release@v1
