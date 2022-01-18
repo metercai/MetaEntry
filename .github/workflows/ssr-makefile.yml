@@ -67,7 +67,7 @@ jobs:
           - aarch64-apple-darwin
     steps:
       - uses: GuillaumeFalourd/clone-github-repo-action@v1
-          with:
+        with:
             owner: 'shadowsocks'
             repository: 'shadowsocks-rust'
       - name: Install GNU tar
@@ -110,7 +110,7 @@ jobs:
       RUST_BACKTRACE: full
     steps:
       - uses: GuillaumeFalourd/clone-github-repo-action@v1
-          with:
+        with:
             owner: 'shadowsocks'
             repository: 'shadowsocks-rust'
       - name: Install Rust Nightly
