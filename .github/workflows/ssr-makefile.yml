@@ -42,6 +42,8 @@ jobs:
           fi
           cd build
           ./build-release -t ${{ matrix.target }} $compile_features $compile_compress
+          md5sum build/release/* > release.txt
+          echo "Releases new version!" >> release.txt
       - name: Upload package to release
         uses: softprops/action-gh-release@v1
         env:
@@ -49,4 +51,5 @@ jobs:
         with:
           name: ${{ env.IPKG_VERSION }}
           tag_name: ${{ env.IPKG_VERSION }}
+          body_path: release.txt
           files: build/release/*
