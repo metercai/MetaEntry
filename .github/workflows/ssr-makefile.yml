@@ -29,7 +29,7 @@ jobs:
       - name: Build ${{ matrix.target }}
         timeout-minutes: 120
         run: |
-          cd <repository-name>
+          cd shadowsocks-rust
           compile_target=${{ matrix.target }}
           if [[ "$compile_target" == *"-linux-"* || "$compile_target" == *"-apple-"* ]]; then
             compile_features="-f local-redir -f local-tun -f local-dns"
