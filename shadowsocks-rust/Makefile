@@ -4,18 +4,13 @@
 # This is free software, licensed under the GNU General Public License v3.
 # See /LICENSE for more information.
 #
-#	$(INSTALL_DIR) $(1)/etc/uci-defaults
-# 	$(INSTALL_BIN) ./files/uci-defaults $(1)/etc/uci-defaults/$(PKG_NAME)
-
-
 
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=shadowsocks-rust
 PKG_VERSION:=1.12.6
-PKG_RELEASE:=20211128
+PKG_RELEASE:=20220118
 
-# refer: https://github.com/honwen/openwrt-shadowsocks-rust/commit/1c42f16ba56440bffd3560aa5d1c8305f5d9e1c5
 PKG_LIBC:=musl
 ifeq ($(ARCH),arm)
   PKG_LIBC:=musleabi
@@ -77,16 +72,18 @@ endef
 
 define Package/$(PKG_NAME)/install
 	$(INSTALL_DIR) $(1)/usr/bin
-	$(INSTALL_BIN) ./files/ssrust/ssservice $(1)/usr/bin/
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/ssservice $(1)/usr/bin/
 	$(INSTALL_DIR) $(1)/etc/ssrust
 	$(INSTALL_CONF) ./files/local.json $(1)/etc/ssrust/local.json
 	$(INSTALL_CONF) ./files/log4rs.yaml $(1)/etc/ssrust/log4rs.yaml
 	$(INSTALL_CONF) ./files/ssrust.acl $(1)/etc/ssrust/ssrust.acl
 	$(SED) "s#%SSSPWD%#$(SSSPWD)#g" $(1)/etc/ssrust/local.json
+	$(INSTALL_DIR) $(1)/etc/uci-defaults
+    $(INSTALL_BIN) ./files/uci-defaults $(1)/etc/uci-defaults/$(PKG_NAME)
 	$(INSTALL_DIR) $(1)/etc/init.d
 	$(INSTALL_BIN) ./files/init.d/ssservice $(1)/etc/init.d/ssservice
 ifeq ($(CONFIG_SS_RUST_TOOLS),y)
-	$(INSTALL_BIN) ./files/ssrust/ssurl $(1)/usr/bin/
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/ssurl $(1)/usr/bin/
 endif
 endef
 

@@ -71,7 +71,8 @@ jobs:
             done
 
             md5sum ${{ github.workspace }}/release/*.xz > release.txt
-            echo "\nRelease new version!" >> release.txt
+            echo "" >> release.txt
+            echo "Release new version!" >> release.txt
       - name: Upload package to release
         uses: softprops/action-gh-release@v1
         env:

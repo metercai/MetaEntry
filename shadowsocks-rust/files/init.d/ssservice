@@ -4,8 +4,8 @@ STOP=10
 
 USE_PROCD=1
 PROG=/usr/bin/ssservice
-CONFIGFILE=/etc/sss/local.json
-ACLFILE=/etc/sss/sss.acl
+CONFIGFILE=/etc/ssrust/local.json
+ACLFILE=/etc/ssrust/ssrust.acl
 
 start_service() {
 	procd_open_instance
