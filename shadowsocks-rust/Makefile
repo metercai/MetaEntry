@@ -12,7 +12,7 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=shadowsocks-rust
-PKG_VERSION:=1.12.4
+PKG_VERSION:=1.12.6
 PKG_RELEASE:=20211128
 
 # refer: https://github.com/honwen/openwrt-shadowsocks-rust/commit/1c42f16ba56440bffd3560aa5d1c8305f5d9e1c5
@@ -27,7 +27,7 @@ ifeq ($(ARCH),arm)
 endif
 
 PKG_SOURCE:=shadowsocks-v$(PKG_VERSION).$(ARCH)-unknown-linux-$(PKG_LIBC).tar.xz
-PKG_SOURCE_URL:=https://github.com/shadowsocks/shadowsocks-rust/releases/download/v$(PKG_VERSION)/
+PKG_SOURCE_URL:=https://github.com/metercai/MetaEntry/releases/download/v$(PKG_VERSION)/
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)/$(BUILD_VARIANT)/$(PKG_NAME)-$(PKG_VERSION)-$(PKG_RELEASE)
 PKG_HASH:=skip
 
@@ -70,23 +70,23 @@ exit 0
 endef
 
 define Package/$(PKG_NAME)/conffiles
-/etc/ssr/local.json
-/etc/ssr/log4rs.yaml
-/etc/ssr/ssr.acl
+/etc/ssrust/local.json
+/etc/ssrust/log4rs.yaml
+/etc/ssrust/ssrust.acl
 endef
 
 define Package/$(PKG_NAME)/install
 	$(INSTALL_DIR) $(1)/usr/bin
-	$(INSTALL_BIN) ./files/ssr/ssservice $(1)/usr/bin/
-	$(INSTALL_DIR) $(1)/etc/ssr
-	$(INSTALL_CONF) ./files/local.json $(1)/etc/ssr/local.json
-	$(INSTALL_CONF) ./files/log4rs.yaml $(1)/etc/ssr/log4rs.yaml
-	$(INSTALL_CONF) ./files/ssr.acl $(1)/etc/ssr/ssr.acl
-	$(SED) "s#%SSSPWD%#$(SSSPWD)#g" $(1)/etc/ssr/local.json
+	$(INSTALL_BIN) ./files/ssrust/ssservice $(1)/usr/bin/
+	$(INSTALL_DIR) $(1)/etc/ssrust
+	$(INSTALL_CONF) ./files/local.json $(1)/etc/ssrust/local.json
+	$(INSTALL_CONF) ./files/log4rs.yaml $(1)/etc/ssrust/log4rs.yaml
+	$(INSTALL_CONF) ./files/ssrust.acl $(1)/etc/ssrust/ssrust.acl
+	$(SED) "s#%SSSPWD%#$(SSSPWD)#g" $(1)/etc/ssrust/local.json
 	$(INSTALL_DIR) $(1)/etc/init.d
 	$(INSTALL_BIN) ./files/init.d/ssservice $(1)/etc/init.d/ssservice
 ifeq ($(CONFIG_SS_RUST_TOOLS),y)
-	$(INSTALL_BIN) ./files/ssr/ssurl $(1)/usr/bin/
+	$(INSTALL_BIN) ./files/ssrust/ssurl $(1)/usr/bin/
 endif
 endef
 

@@ -1,8 +1,8 @@
-name: SSR Build Releases
+name: SSRust Build Releases
 on:
   push:
     paths:
-      - '**/*-ssr.version'
+      - '**/*-ssrust.version'
 
 env:
   CARGO_TERM_COLOR: always
@@ -71,7 +71,7 @@ jobs:
             done
 
             md5sum ${{ github.workspace }}/release/*.xz > release.txt
-            echo "Release new version!" >> release.txt
+            echo "\nRelease new version!" >> release.txt
       - name: Upload package to release
         uses: softprops/action-gh-release@v1
         env:
