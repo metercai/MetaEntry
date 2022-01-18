@@ -2,7 +2,7 @@ name: SSR Build Releases
 on:
   push:
     paths:
-      - 'ssr.build.version'
+      - '*.version'
 
 env:
   CARGO_TERM_COLOR: always
