@@ -1,8 +1,8 @@
 name: SSR Build Releases
 on:
   push:
-    tags:
-      - v*
+    paths:
+      - 'ssr.build.version'
 
 env:
   CARGO_TERM_COLOR: always
@@ -31,6 +31,7 @@ jobs:
       - name: Build ${{ matrix.target }}
         timeout-minutes: 120
         run: |
+          cd ssr
           compile_target=${{ matrix.target }}
           if [[ "$compile_target" == *"-linux-"* || "$compile_target" == *"-apple-"* ]]; then
             compile_features="-f local-redir -f local-tun -f local-dns"
