@@ -70,23 +70,23 @@ exit 0
 endef
 
 define Package/$(PKG_NAME)/conffiles
-/etc/sss/local.json
-/etc/sss/log4rs.yaml
-/etc/sss/sss.acl
+/etc/ssr/local.json
+/etc/ssr/log4rs.yaml
+/etc/ssr/ssr.acl
 endef
 
 define Package/$(PKG_NAME)/install
 	$(INSTALL_DIR) $(1)/usr/bin
-	$(INSTALL_BIN) ./files/sss/ssservice $(1)/usr/bin/
-	$(INSTALL_DIR) $(1)/etc/sss
-	$(INSTALL_CONF) ./files/local.json $(1)/etc/sss/local.json
-	$(INSTALL_CONF) ./files/log4rs.yaml $(1)/etc/sss/log4rs.yaml
-	$(INSTALL_CONF) ./files/sss.acl $(1)/etc/sss/sss.acl
-	$(SED) "s#%SSSPWD%#$(SSSPWD)#g" $(1)/etc/sss/local.json
+	$(INSTALL_BIN) ./files/ssr/ssservice $(1)/usr/bin/
+	$(INSTALL_DIR) $(1)/etc/ssr
+	$(INSTALL_CONF) ./files/local.json $(1)/etc/ssr/local.json
+	$(INSTALL_CONF) ./files/log4rs.yaml $(1)/etc/ssr/log4rs.yaml
+	$(INSTALL_CONF) ./files/ssr.acl $(1)/etc/ssr/ssr.acl
+	$(SED) "s#%SSSPWD%#$(SSSPWD)#g" $(1)/etc/ssr/local.json
 	$(INSTALL_DIR) $(1)/etc/init.d
 	$(INSTALL_BIN) ./files/init.d/ssservice $(1)/etc/init.d/ssservice
 ifeq ($(CONFIG_SS_RUST_TOOLS),y)
-	$(INSTALL_BIN) ./files/sss/ssurl $(1)/usr/bin/
+	$(INSTALL_BIN) ./files/ssr/ssurl $(1)/usr/bin/
 endif
 endef
 
