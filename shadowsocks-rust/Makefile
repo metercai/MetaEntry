@@ -79,7 +79,7 @@ define Package/$(PKG_NAME)/install
 	$(INSTALL_CONF) ./files/ssrust.acl $(1)/etc/ssrust/ssrust.acl
 	$(SED) "s#%SSSPWD%#$(SSSPWD)#g" $(1)/etc/ssrust/local.json
 	$(INSTALL_DIR) $(1)/etc/uci-defaults
-    $(INSTALL_BIN) ./files/uci-defaults $(1)/etc/uci-defaults/$(PKG_NAME)
+	$(INSTALL_BIN) ./files/uci-defaults $(1)/etc/uci-defaults/$(PKG_NAME)
 	$(INSTALL_DIR) $(1)/etc/init.d
 	$(INSTALL_BIN) ./files/init.d/ssservice $(1)/etc/init.d/ssservice
 ifeq ($(CONFIG_SS_RUST_TOOLS),y)
