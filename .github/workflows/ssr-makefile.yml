@@ -42,14 +42,39 @@ jobs:
           fi
           cd build
           ./build-release -t ${{ matrix.target }} $compile_features $compile_compress
-          md5sum build/release/* > release.txt
-          echo "Releases new version!" >> release.txt
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: ${{ env.SSR_VERSION }}
+          path: ${{ github.workspace }}/build/release/*.xz
+
+  deploy:
+    needs: [build-cross]
+    name: Create release and upload artifacts
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Download build artifacts
+        uses: actions/download-artifact@v2
+        with:
+          name: ${{ env.SSR_VERSION }}
+
+      - name: Upload build artifacts to cloud
+        run: |
+            mkdir -p ${{ github.workspace }}/release
+            for xz in `find . -name '*.xz'`; do
+              mv $xz ${{ github.workspace }}/release
+            done
+
+            md5sum ${{ github.workspace }}/release/*.xz > release.txt
+            echo "Releases new version!" >> release.txt
       - name: Upload package to release
         uses: softprops/action-gh-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.ACTION_GITHUB_TOKEN }}
         with:
-          name: ${{ env.IPKG_VERSION }}
-          tag_name: ${{ env.IPKG_VERSION }}
+          name: ${{ env.SSR_VERSION }}
+          tag_name: ${{ env.SSR_VERSION }}
           body_path: release.txt
-          files: build/release/*
+          files: release/*
