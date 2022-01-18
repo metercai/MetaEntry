@@ -17,6 +17,9 @@ jobs:
       matrix:
         target:
           - aarch64-unknown-linux-musl
+          - x86_64-unknown-linux-musl
+          - arm-unknown-linux-musleabihf
+          - mips-unknown-linux-musl
 
     steps:
       - name: Checkout
@@ -68,7 +71,7 @@ jobs:
             done
 
             md5sum ${{ github.workspace }}/release/*.xz > release.txt
-            echo "Releases new version!" >> release.txt
+            echo "Release new version!" >> release.txt
       - name: Upload package to release
         uses: softprops/action-gh-release@v1
         env:
