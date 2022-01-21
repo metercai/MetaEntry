@@ -81,7 +81,7 @@ add_iptables_rules(){
 		iptables -A FORWARD -i $ETH_IFACE -o $EDGE_IFACE -m state --state RELATED,ESTABLISHED -j ACCEPT
 		iptables -t nat -A POSTROUTING -o $ETH_IFACE -s $NET_RANGE -j MASQUERADE
 	else
-		echo "iptables rules already exists on system..."
+		echo "iptables rules for edge already exists on system..."
 	fi
 }
 
@@ -92,6 +92,6 @@ remove_iptables_rules(){
 		iptables -D FORWARD -i $ETH_IFACE -o $EDGE_IFACE -m state --state RELATED,ESTABLISHED -j ACCEPT
 		iptables -t nat -D POSTROUTING -o $ETH_IFACE -s $NET_RANGE -j MASQUERADE
 	else
-		echo "iptables rules already removed from system..."
+		echo "iptables rules for edge already removed from system..."
 	fi
 }
