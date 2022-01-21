@@ -60,13 +60,6 @@
     "ipv6_first": false,
     "ipv6_only": false,
 
-    "log": {
-        "level": 1,
-        "format": {
-            "without_time": false
-        },
-        "config_path": "log4rs.yaml"
-    },
     "runtime": {
         "mode": "multi_thread",
         "worker_count": 10
