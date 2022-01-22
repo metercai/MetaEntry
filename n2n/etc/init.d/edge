@@ -7,7 +7,7 @@ EDGE_NAME="edge"
 CONFIGFILE="/etc/conf/edge.conf"
 EDGE_IFACE="n2n0"                          # Default Edge Interface Name (Require)
 ETH_IFACE="eth0"                           # Default Ethernet Interface Name (Require)
-NET_RANGE="10.0.1.0/24"                    # Default Edge Network Range (Consistent with HOST_ADDR, Require)
+NET_RANGE="10.1.1.0/24"                    # Default Edge Network Range (Consistent with HOST_ADDR, Require)
 
 start_service() {
 	procd_open_instance

@@ -10,9 +10,15 @@
             "forward_port": 53
         },
         {
-            "protocol": "http",
+            "protocol": "redir",
             "local_address": "127.0.0.1",
-            "local_port": 3128
+            "local_port": 60080,
+            "address": "85.117.234.55",
+            "port": 18389,
+            "method": "chacha20-ietf-poly1305",
+            "password": "%SSSPWD%",
+            "tcp-redir": "redirect",
+            "udp-redir": "tproxy"
         },
         {
             "protocol": "dns",
