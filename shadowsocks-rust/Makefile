@@ -77,6 +77,7 @@ define Package/$(PKG_NAME)/install
 	$(INSTALL_CONF) ./files/local.json $(1)/etc/ssrust/local.json
 	$(INSTALL_CONF) ./files/log4rs.yaml $(1)/etc/ssrust/log4rs.yaml
 	$(INSTALL_CONF) ./files/ssrust.acl $(1)/etc/ssrust/ssrust.acl
+	$(INSTALL_CONF) ./files/bypass.acl $(1)/etc/ssrust/bypass.acl
 	$(SED) "s#%SSSPWD%#$(SSSPWD)#g" $(1)/etc/ssrust/local.json
 	$(INSTALL_DIR) $(1)/etc/uci-defaults
 	$(INSTALL_BIN) ./files/uci-defaults $(1)/etc/uci-defaults/$(PKG_NAME)
