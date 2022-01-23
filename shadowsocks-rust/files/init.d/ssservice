@@ -3,13 +3,21 @@ START=92
 STOP=10
 
 USE_PROCD=1
-PROG=/usr/bin/ssservice
+PROG=ssservice
 CONFIGFILE=/etc/ssrust/local.json
 ACLFILE=/etc/ssrust/ssrust.acl
+
+RometeIP="85.117.234.55"
+RomatePort="18388"
+LocalPort="60080"
+BypassFile="/etc/ssrust/bypass.acl"
 
 start_service() {
 	procd_open_instance
 	procd_set_param command $PROG local -d --acl $ACLFILE -c $CONFIGFILE
+  load_bypass_set
+  start_iptables
+  start_iproute2
 	procd_set_param file $CONFIGFILE
 	procd_set_param respawn
 	procd_close_instance
@@ -17,10 +25,93 @@ start_service() {
 
 stop_service()
 {
-	service_stop $PROG
+  stop_iproute2
+  stop_iptables
+	service_stop
+	killall $PROG > /dev/null 2>&1
 }
 
 service_triggers()
 {
 	procd_add_reload_trigger "local.json"
+}
+
+
+load_bypass_set() {
+  ##################### IPSET #####################
+  # add bypass_addr collection to ss_bypass set in ipset
+  if [ -f $BypassFile ]; then
+      IPS=`which ipset`
+      $IPS -! restore <<-EOF || return 1
+          -exist create ss_bypass hash:net
+          $(egrep -v "^#|^$" $BypassFile | sed -e "s/^/-exist add ss_bypass /")
+EOF
+      echo "Bypass file was loaded"
+  else
+      echo "Bypass file does not exist"
+  fi
+}
+
+start_iptables() {
+    ##################### SSR #####################
+    iptables -t mangle -N SSR
+
+    # connection-mark -> packet-mark
+    iptables -t mangle -A SSR -j CONNMARK --restore-mark
+    iptables -t mangle -A SSR -m mark --mark 0x2333 -j RETURN
+
+    # ignore traffic sent to ss-server
+    iptables -t mangle -A SSR -p tcp -d $RometeIP --dport $RomatePort -j RETURN
+    iptables -t mangle -A SSR -p udp -d $RometeIP --dport $RomatePort -j RETURN
+
+    # ignore traffic sent to reserved addresses
+    iptables -t nat -A SSR -m set --match-set ss_bypass dst -j RETURN
+
+    # mark the first packet of the connection
+    iptables -t mangle -A SSR -p tcp --syn                      -j MARK --set-mark 0x2333
+    iptables -t mangle -A SSR -p udp -m conntrack --ctstate NEW -j MARK --set-mark 0x2333
+
+    # packet-mark -> connection-mark
+    iptables -t mangle -A SSR -j CONNMARK --save-mark
+
+    ##################### OUTPUT #####################
+    # proxy the outgoing traffic from this machine
+    iptables -t mangle -A OUTPUT -p tcp -m addrtype --src-type LOCAL ! --dst-type LOCAL -j SSR
+    iptables -t mangle -A OUTPUT -p udp -m addrtype --src-type LOCAL ! --dst-type LOCAL -j SSR
+
+    ##################### PREROUTING #####################
+    # proxy traffic passing through this machine (other->other)
+    iptables -t mangle -A PREROUTING -p tcp -m addrtype ! --src-type LOCAL ! --dst-type LOCAL -j SSR
+    iptables -t mangle -A PREROUTING -p udp -m addrtype ! --src-type LOCAL ! --dst-type LOCAL -j SSR
+
+    # hand over the marked package to TPROXY for processing
+    iptables -t mangle -A PREROUTING -p tcp -m mark --mark 0x2333 -j TPROXY --on-ip 127.0.0.1 --on-port $LocalPort
+    iptables -t mangle -A PREROUTING -p udp -m mark --mark 0x2333 -j TPROXY --on-ip 127.0.0.1 --on-port $LocalPort
+}
+
+stop_iptables() {
+    ##################### PREROUTING #####################
+    iptables -t mangle -D PREROUTING -p tcp -m mark --mark 0x2333 -j TPROXY --on-ip 127.0.0.1 --on-port $LocalPort &>/dev/null
+    iptables -t mangle -D PREROUTING -p udp -m mark --mark 0x2333 -j TPROXY --on-ip 127.0.0.1 --on-port $LocalPort &>/dev/null
+
+    iptables -t mangle -D PREROUTING -p tcp -m addrtype ! --src-type LOCAL ! --dst-type LOCAL -j SSR &>/dev/null
+    iptables -t mangle -D PREROUTING -p udp -m addrtype ! --src-type LOCAL ! --dst-type LOCAL -j SSR &>/dev/null
+
+    ##################### OUTPUT #####################
+    iptables -t mangle -D OUTPUT -p tcp -m addrtype --src-type LOCAL ! --dst-type LOCAL -j SSR &>/dev/null
+    iptables -t mangle -D OUTPUT -p udp -m addrtype --src-type LOCAL ! --dst-type LOCAL -j SSR &>/dev/null
+
+    ##################### SSR #####################
+    iptables -t mangle -F SSR &>/dev/null
+    iptables -t mangle -X SSR &>/dev/null
+}
+
+start_iproute2() {
+    ip route add local default dev lo table 100
+    ip rule  add fwmark 0x2333        table 100
+}
+
+stop_iproute2() {
+    ip rule  del   table 100 &>/dev/null
+    ip route flush table 100 &>/dev/null
 }
