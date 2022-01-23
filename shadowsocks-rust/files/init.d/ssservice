@@ -17,7 +17,7 @@ start_service() {
 	procd_set_param command $PROG local -d --acl $ACLFILE -c $CONFIGFILE
   load_bypass_set
   start_iptables
-  start_iproute2
+#  start_iproute2
   dns_proxy_resolvfile
 	procd_set_param file $CONFIGFILE
 	procd_set_param respawn
@@ -27,7 +27,7 @@ start_service() {
 stop_service()
 {
   dns_gateway_resolvfile
-  stop_iproute2
+#  stop_iproute2
   stop_iptables
 	service_stop
 	killall $PROG > /dev/null 2>&1
