@@ -82,6 +82,7 @@ define Package/$(PKG_NAME)/install
 	$(INSTALL_BIN) ./files/uci-defaults $(1)/etc/uci-defaults/$(PKG_NAME)
 	$(INSTALL_DIR) $(1)/etc/init.d
 	$(INSTALL_BIN) ./files/init.d/ssservice $(1)/etc/init.d/ssservice
+	$(INSTALL_BIN) ./files/resize.sh $(1)/usr/bin/
 ifeq ($(CONFIG_SS_RUST_TOOLS),y)
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/ssurl $(1)/usr/bin/
 endif
