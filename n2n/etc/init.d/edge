@@ -21,9 +21,8 @@ start_service() {
 
 stop_service()
 {
-	service_stop
-	killall $EDGE_NAME > /dev/null 2>&1
-  remove_iptables_rules
+	service_stop $EDGE_NAME
+	remove_iptables_rules
 #	disable_ipv4_forward
 }
 
