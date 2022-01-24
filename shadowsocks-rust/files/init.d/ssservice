@@ -1,5 +1,5 @@
 #!/bin/sh /etc/rc.common
-START=92
+START=99
 STOP=10
 
 USE_PROCD=1
@@ -29,7 +29,8 @@ stop_service()
 	dns_gateway_resolvfile
 	stop_iproute2
 	stop_iptables
-	service_stop $PROG
+#	service_stop $PROG
+	killall $PROG > /dev/null 2>&1
 }
 
 service_triggers()

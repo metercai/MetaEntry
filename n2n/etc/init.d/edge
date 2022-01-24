@@ -1,5 +1,5 @@
 #!/bin/sh /etc/rc.common
-START=90
+START=98
 STOP=10
 
 USE_PROCD=1
@@ -21,7 +21,8 @@ start_service() {
 
 stop_service()
 {
-	service_stop $EDGE_NAME
+#	service_stop $EDGE_NAME
+	killall $EDGE_NAME > /dev/null 2>&1
 	remove_iptables_rules
 #	disable_ipv4_forward
 }
