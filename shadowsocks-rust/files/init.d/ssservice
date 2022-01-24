@@ -115,14 +115,14 @@ start_iproute2() {
     ip route add local default dev lo table 100
     ip rule  add fwmark 0x2333        table 100
 
-    echo "SSR rules added to iproute2..."
+    echo "SSR rules added to iproute..."
 }
 
 stop_iproute2() {
     ip rule  del   table 100 &>/dev/null
     ip route flush table 100 &>/dev/null
 
-    echo "SSR rules removed from iproute2..."
+    echo "SSR rules removed from iproutes..."
 }
 
 dns_proxy_resolvfile() {
