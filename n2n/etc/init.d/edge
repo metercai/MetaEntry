@@ -52,6 +52,7 @@ enable_ipv4_forward(){
 	pre_checking_forward=$(check_ipv4_forward)
 	if [ "$pre_checking_forward" -eq 0 ]; then
 		echo 1 > /proc/sys/net/ipv4/ip_forward
+		echo "ipv4 forward enabled on system..."
 	else
 		echo "ipv4 forward already enabled on system..."
 	fi
@@ -78,8 +79,9 @@ add_iptables_rules(){
 	pre_existing_rule=$(check_iptables_rule_exists)
 	if [ "$pre_existing_rule" -eq 1 ]; then
 		iptables -A FORWARD -i $EDGE_IFACE -o $ETH_IFACE -j ACCEPT
-		iptables -A FORWARD -i $ETH_IFACE -o $EDGE_IFACE -m state --state RELATED,ESTABLISHED -j ACCEPT
+		iptables -A FORWARD -i $ETH_IFACE -o $EDGE_IFACE -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT
 		iptables -t nat -A POSTROUTING -o $ETH_IFACE -s $NET_RANGE -j MASQUERADE
+		echo "iptables rules for edge added to system..."
 	else
 		echo "iptables rules for edge already exists on system..."
 	fi
@@ -91,6 +93,7 @@ remove_iptables_rules(){
 		iptables -D FORWARD -i $EDGE_IFACE -o $ETH_IFACE -j ACCEPT
 		iptables -D FORWARD -i $ETH_IFACE -o $EDGE_IFACE -m state --state RELATED,ESTABLISHED -j ACCEPT
 		iptables -t nat -D POSTROUTING -o $ETH_IFACE -s $NET_RANGE -j MASQUERADE
+		echo "iptables rules for edge removed from system..."
 	else
 		echo "iptables rules for edge already removed from system..."
 	fi

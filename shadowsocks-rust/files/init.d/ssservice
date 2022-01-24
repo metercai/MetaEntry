@@ -88,6 +88,8 @@ start_iptables() {
     # hand over the marked package to TPROXY for processing
     iptables -t mangle -A PREROUTING -p tcp -m mark --mark 0x2333 -j TPROXY --on-ip 127.0.0.1 --on-port $LocalPort
     iptables -t mangle -A PREROUTING -p udp -m mark --mark 0x2333 -j TPROXY --on-ip 127.0.0.1 --on-port $LocalPort
+
+    echo "SSR rules added to iptables..."
 }
 
 stop_iptables() {
@@ -105,16 +107,22 @@ stop_iptables() {
     ##################### SSR #####################
     iptables -t mangle -F SSR &>/dev/null
     iptables -t mangle -X SSR &>/dev/null
+
+    echo "SSR rules removed from iptables..."
 }
 
 start_iproute2() {
     ip route add local default dev lo table 100
     ip rule  add fwmark 0x2333        table 100
+
+    echo "SSR rules added to iproute2..."
 }
 
 stop_iproute2() {
     ip rule  del   table 100 &>/dev/null
     ip route flush table 100 &>/dev/null
+
+    echo "SSR rules removed from iproute2..."
 }
 
 dns_proxy_resolvfile() {
@@ -122,6 +130,7 @@ dns_proxy_resolvfile() {
     uci set dhcp.@dnsmasq[0].resolvfile="/tmp/resolv.conf"
     uci commit dhcp
     uci set system.@system[0].timezone="CST-8"
+    uci set system.@system[0].zonename="Asia/Shanghai"
     uci commit system
 }
 
